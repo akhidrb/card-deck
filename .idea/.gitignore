@@ -21,3 +21,5 @@ test/reports
 
 # Delve binary
 dev
+/modules.xml
+/toggl-cards.iml
