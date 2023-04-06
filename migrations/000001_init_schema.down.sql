@@ -1,5 +1,7 @@
 BEGIN;
 
+DROP TABLE IF EXISTS card_lookups;
+
 DROP EXTENSION IF EXISTS "uuid-ossp";
 
 COMMIT;

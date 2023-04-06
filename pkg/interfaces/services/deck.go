@@ -1,10 +1,9 @@
 package services
 
 import (
-	"github.com/akhidrb/toggl-cards/pkg/dtos/requests"
-	"github.com/akhidrb/toggl-cards/pkg/dtos/responses"
+	"github.com/akhidrb/toggl-cards/pkg/dtos"
 )
 
 type IDeck interface {
-	Create(request requests.CreateDeckRequest) (responses.CreateDeckResponse, error)
+	Create(request dtos.CreateDeckRequest) (dtos.CreateDeckResponse, error)
 }

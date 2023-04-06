@@ -7,7 +7,7 @@ import (
 )
 
 type Model struct {
-	ID        uuid.UUID
+	ID        uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt

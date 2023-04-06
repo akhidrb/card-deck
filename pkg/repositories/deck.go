@@ -14,6 +14,6 @@ func NewDeck(dbConn *gorm.DB) repositoriesI.IDeck {
 	return Deck{db: dbConn}
 }
 
-func (p Deck) Create(deck models.Deck) error {
-	return p.db.Create(&deck).Error
+func (p Deck) Create(deck *models.Deck) error {
+	return p.db.Create(deck).Error
 }

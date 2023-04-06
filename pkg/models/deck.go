@@ -8,5 +8,5 @@ import (
 type Deck struct {
 	db.Model
 	Shuffled bool
-	cards    pq.StringArray
+	Cards    pq.StringArray `gorm:"type:varchar[]"`
 }
