@@ -8,6 +8,13 @@ Feature: Open a Deck
       | KH |
       | 2C |
     When the user requests to open the created deck
-    Then the user should receive a deck with the following results:
-      | shuffled | remaining | cards          |
-      | false    | 5         | AC,5S,JD,KH,2C |
+    Then the user should receive a deck ID and the following results:
+      | shuffled | remaining |
+      | false    | 5         |
+    And the cards in the deck should be:
+      | code | value | suit     |
+      | AC   | ACE   | CLUBS    |
+      | 5S   | 5     | SPADES   |
+      | JD   | JACK  | DIAMONDS |
+      | KH   | KING  | HEARTS   |
+      | 2C   | 2     | CLUBS    |

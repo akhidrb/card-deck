@@ -56,7 +56,7 @@ func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context
 	if err != nil {
 		return ctx, err
 	}
-	return context.WithValue(ctx, CreateDeckResponse{}, res), err
+	return context.WithValue(ctx, responseKey, res), err
 }
 
 func theUserShouldReceiveADeckIDAndTheFollowingResults(
@@ -84,7 +84,7 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(
 
 func decodeCreatedDeckResponse(ctx context.Context) (CreateDeckResponse, error) {
 	var actualResp CreateDeckResponse
-	res, ok := ctx.Value(CreateDeckResponse{}).(*http.Response)
+	res, ok := ctx.Value(responseKey).(*http.Response)
 	if !ok {
 		return actualResp, errors.New("there is no response available")
 	}

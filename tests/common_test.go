@@ -18,6 +18,8 @@ type TestConfig struct {
 	adapter Client
 }
 
+var responseKey = "RESPONSE"
+
 func TestFeatures(t *testing.T) {
 	suite := godog.TestSuite{
 		TestSuiteInitializer: InitTestSuite,
@@ -48,10 +50,8 @@ func InitScenarios(ctx *godog.ScenarioContext) {
 		theUserShouldReceiveADeckIDAndTheFollowingResults,
 	)
 	ctx.Step(`^the user requests to open the created deck$`, theUserRequestsToOpenTheCreatedDeck)
-	ctx.Step(
-		`^the user should receive a deck with the following results:$`,
-		theUserShouldReceiveADeckWithTheFollowingResults,
-	)
+	ctx.Step(`^the cards in the deck should be:$`, theCardsInTheDeckShouldBe)
+
 }
 
 func InitTestSuite(ctx *godog.TestSuiteContext) {
@@ -82,6 +82,6 @@ func runMigrations(db *gorm.DB) {
 		log.Println("Database wasn't dropped", "err", err.Error())
 	}
 	if err := m.Up(); err != nil {
-		log.Println("Migrations weren't updated", "err", err.Error())
+		log.Println("Migrations weren't updated", "err:", err.Error())
 	}
 }

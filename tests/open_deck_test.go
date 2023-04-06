@@ -9,11 +9,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"net/http"
-	"strconv"
-	"strings"
 )
-
-const openDeck = "OPEN_DECK"
 
 func theUserRequestsToOpenTheCreatedDeck(ctx context.Context) (context.Context, error) {
 	createdDeck, err := decodeCreatedDeckResponse(ctx)
@@ -25,14 +21,14 @@ func theUserRequestsToOpenTheCreatedDeck(ctx context.Context) (context.Context, 
 	if err != nil {
 		return ctx, err
 	}
-	return context.WithValue(ctx, openDeck, res), err
+	return context.WithValue(ctx, responseKey, res), err
 }
 
-func theUserShouldReceiveADeckWithTheFollowingResults(
-	ctx context.Context,
-	results *godog.Table,
-) (context.Context, error) {
-	res, ok := ctx.Value(openDeck).(*http.Response)
+func theCardsInTheDeckShouldBe(ctx context.Context, cards *godog.Table) (
+	context.Context,
+	error,
+) {
+	res, ok := ctx.Value(responseKey).(*http.Response)
 	if !ok {
 		return ctx, errors.New("there is no response available")
 	}
@@ -51,26 +47,14 @@ func theUserShouldReceiveADeckWithTheFollowingResults(
 	if err != nil {
 		return ctx, errors.New("failed to decode response")
 	}
-	expectedShuffled, err := strconv.ParseBool(results.Rows[1].Cells[0].Value)
-	if err != nil {
-		return ctx, err
+	for i, row := range cards.Rows {
+		if i == 0 {
+			continue
+		}
+		assert.Equal(&t, row.Cells[0].Value, actualResp.Cards[i])
+		if t.err != nil {
+			return ctx, t.err
+		}
 	}
-	assert.Equal(&t, expectedShuffled, actualResp.Shuffled)
-	if t.err != nil {
-		return ctx, t.err
-	}
-	expectedRemaining, err := strconv.Atoi(results.Rows[1].Cells[1].Value)
-	if err != nil {
-		return ctx, err
-	}
-	assert.Equal(&t, expectedRemaining, actualResp.Remaining)
-	if t.err != nil {
-		return ctx, t.err
-	}
-	expectedCards := strings.Split(results.Rows[1].Cells[1].Value, ",")
-	if err != nil {
-		return ctx, err
-	}
-	assert.Equal(&t, expectedCards, actualResp.Cards)
-	return ctx, t.err
+	return ctx, nil
 }

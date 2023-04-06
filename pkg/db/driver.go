@@ -23,11 +23,15 @@ func Connect(host, user, password, name string) *gorm.DB {
 			Colorful:                  true,        // Disable color
 		},
 	)
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", host, user, password, name)
+	dsn := fmt.Sprintf(
+		"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable", host, user, password,
+		name,
+	)
 	db, err := gorm.Open(
 		postgres.Open(dsn), &gorm.Config{
 			Logger: newLogger,
-		})
+		},
+	)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,6 +53,6 @@ func runMigrations(db *gorm.DB) {
 		log.Fatal(err)
 	}
 	if err := m.Up(); err != nil {
-		log.Println("Migrations weren't updated", "err", err.Error())
+		log.Println("Migrations weren't updated", "err:", err.Error())
 	}
 }
