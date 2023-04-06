@@ -48,6 +48,9 @@ func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, 
 	return
 }
 
+var cardRanksList = []string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
+var cardSuitsList = []string{"S", "D", "C", "H"}
+
 func (c Deck) constructCardList() []string {
 	cardList := make([]string, 0, 52)
 	for _, suit := range cardSuitsList {
