@@ -4,10 +4,17 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"github.com/golang-migrate/migrate/v4"
+	postgresMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 	"net/http"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -54,11 +61,13 @@ func aUserCreatesAFullDeckThatIsShuffled(ctx context.Context) (context.Context, 
 
 func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context, error) {
 	url := "deck"
-	requestBody, err := json.Marshal(request)
-	if err != nil {
-		return ctx, err
+	params := map[string]string{
+		"shuffle": strconv.FormatBool(request.Shuffle),
 	}
-	res, err := testConfig.adapter.Do(http.MethodPost, url, nil, nil, requestBody)
+	if request.Cards != nil {
+		params["cards"] = strings.Join(request.Cards, ",")
+	}
+	res, err := testConfig.adapter.Do(http.MethodPost, url, nil, params, nil)
 	if err != nil {
 		return ctx, err
 	}
@@ -110,4 +119,30 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 func InitTestSuite(ctx *godog.TestSuiteContext) {
 	clientInst := NewClient("http://localhost:8080/api/v1", time.Second*10)
 	testConfig = TestConfig{adapter: clientInst}
+	dsn := fmt.Sprintf("host=localhost user=toggl password=toggl dbname=cards port=5432 sslmode=disable")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	runMigrations(db)
+}
+func runMigrations(db *gorm.DB) {
+	sqlDB, err := db.DB()
+	if err != nil {
+		log.Fatal(err)
+	}
+	driver, err := postgresMigrate.WithInstance(sqlDB, &postgresMigrate.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	m, err := migrate.NewWithDatabaseInstance("file://../migrations", "postgres", driver)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := m.Down(); err != nil {
+		log.Println("Database wasn't dropped", "err", err.Error())
+	}
+	if err := m.Up(); err != nil {
+		log.Println("Migrations weren't updated", "err", err.Error())
+	}
 }

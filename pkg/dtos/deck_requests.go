@@ -5,7 +5,7 @@ import (
 )
 
 type CreateDeckRequest struct {
-	Shuffle bool     `json:"shuffle"`
+	Shuffle bool     `form:"shuffle"`
 	Cards   []string `json:"cards"`
 }
 

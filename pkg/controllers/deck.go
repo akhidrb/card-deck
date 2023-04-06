@@ -18,7 +18,7 @@ func NewDeck(service servicesI.IDeck) controllersI.IDeck {
 
 func (ctrl Deck) Create(c *gin.Context) {
 	request := dtos.CreateDeckRequest{}
-	if err := c.ShouldBindJSON(&request); err != nil {
+	if err := c.ShouldBindQuery(&request); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}

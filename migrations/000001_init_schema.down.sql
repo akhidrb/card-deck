@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS card_lookups;
+DROP TABLE IF EXISTS decks;
 
 DROP EXTENSION IF EXISTS "uuid-ossp";
 
