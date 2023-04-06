@@ -16,8 +16,8 @@ import (
 
 func TestCreateDeckFeatures(t *testing.T) {
 	suite := godog.TestSuite{
-		TestSuiteInitializer: initTestSuite,
-		ScenarioInitializer:  initCreateDeckScenarios,
+		TestSuiteInitializer: InitTestSuite,
+		ScenarioInitializer:  InitCreateDeckScenarios,
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{"features"},
@@ -30,7 +30,7 @@ func TestCreateDeckFeatures(t *testing.T) {
 	}
 }
 
-func initCreateDeckScenarios(ctx *godog.ScenarioContext) {
+func InitCreateDeckScenarios(ctx *godog.ScenarioContext) {
 	ctx.Step(
 		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
 	)

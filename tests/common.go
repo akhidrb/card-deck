@@ -17,7 +17,7 @@ type TestConfig struct {
 	adapter Client
 }
 
-func initTestSuite(ctx *godog.TestSuiteContext) {
+func InitTestSuite(ctx *godog.TestSuiteContext) {
 	clientInst := NewClient("http://localhost:8080/api/v1", time.Second*10)
 	testConfig = TestConfig{adapter: clientInst}
 	dsn := fmt.Sprintf("host=localhost user=toggl password=toggl dbname=cards port=5432 sslmode=disable")
