@@ -54,12 +54,11 @@ func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsRespon
 	if err != nil {
 		return res, err
 	}
-	request.UpdateModel(&deck)
+	res.ModelToDTO(&deck, request.Count)
 	err = c.repo.Update(deck)
 	if err != nil {
 		return res, err
 	}
-	res.ModelToDTO(deck, request.Count)
 	return
 }
 

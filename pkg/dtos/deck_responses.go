@@ -48,7 +48,7 @@ type DrawCardsResponse struct {
 	Cards []Card `json:"cards"`
 }
 
-func (dto *DrawCardsResponse) ModelToDTO(deck models.Deck, count int) {
+func (dto *DrawCardsResponse) ModelToDTO(deck *models.Deck, count int) {
 	*dto = DrawCardsResponse{}
 	dto.Cards = make([]Card, 0, len(deck.Cards))
 	for i, card := range deck.Cards {
@@ -57,6 +57,7 @@ func (dto *DrawCardsResponse) ModelToDTO(deck models.Deck, count int) {
 		}
 		dto.Cards = append(dto.Cards, constructCardDTOFromCode(card))
 	}
+	deck.Cards = deck.Cards[count:]
 }
 
 var cardRanksMap = map[string]string{

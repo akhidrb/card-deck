@@ -33,7 +33,3 @@ type DrawCardsRequestURI struct {
 type DrawCardsRequestParams struct {
 	Count int `form:"count"`
 }
-
-func (dto *DrawCardsRequest) UpdateModel(deck *models.Deck) {
-	deck.Cards = deck.Cards[dto.Count:]
-}
