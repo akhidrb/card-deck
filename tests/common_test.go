@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"testing"
 	"time"
 )
 
@@ -15,6 +16,42 @@ var testConfig TestConfig
 
 type TestConfig struct {
 	adapter Client
+}
+
+func TestFeatures(t *testing.T) {
+	suite := godog.TestSuite{
+		TestSuiteInitializer: InitTestSuite,
+		ScenarioInitializer:  InitScenarios,
+		Options: &godog.Options{
+			Format:   "pretty",
+			Paths:    []string{"features"},
+			TestingT: t,
+		},
+	}
+
+	if suite.Run() != 0 {
+		t.Fatal("non-zero status returned, failed to run feature tests")
+	}
+}
+
+func InitScenarios(ctx *godog.ScenarioContext) {
+	ctx.Step(
+		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
+	)
+	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
+	ctx.Step(
+		`^a user creates a partial deck that is not shuffled with the following cards:$`,
+		aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards,
+	)
+	ctx.Step(
+		`^the user should receive a deck ID and the following results:$`,
+		theUserShouldReceiveADeckIDAndTheFollowingResults,
+	)
+	ctx.Step(`^the user requests to open the created deck$`, theUserRequestsToOpenTheCreatedDeck)
+	ctx.Step(
+		`^the user should receive a deck with the following results:$`,
+		theUserShouldReceiveADeckWithTheFollowingResults,
+	)
 }
 
 func InitTestSuite(ctx *godog.TestSuiteContext) {

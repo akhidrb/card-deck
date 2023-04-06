@@ -11,39 +11,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"testing"
 )
-
-func TestCreateDeckFeatures(t *testing.T) {
-	suite := godog.TestSuite{
-		TestSuiteInitializer: InitTestSuite,
-		ScenarioInitializer:  InitCreateDeckScenarios,
-		Options: &godog.Options{
-			Format:   "pretty",
-			Paths:    []string{"features"},
-			TestingT: t,
-		},
-	}
-
-	if suite.Run() != 0 {
-		t.Fatal("non-zero status returned, failed to run feature tests")
-	}
-}
-
-func InitCreateDeckScenarios(ctx *godog.ScenarioContext) {
-	ctx.Step(
-		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
-	)
-	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
-	ctx.Step(
-		`^a user creates a partial deck that is not shuffled with the following cards:$`,
-		aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards,
-	)
-	ctx.Step(
-		`^the user should receive a deck ID and the following results:$`,
-		theUserShouldReceiveADeckIDAndTheFollowingResults,
-	)
-}
 
 func aUserCreatesAFullDeckThatIsNotShuffled(ctx context.Context) (context.Context, error) {
 	request := CreateDeckRequest{
@@ -94,24 +62,9 @@ func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context
 func theUserShouldReceiveADeckIDAndTheFollowingResults(
 	ctx context.Context, results *godog.Table,
 ) (context.Context, error) {
-	res, ok := ctx.Value(CreateDeckResponse{}).(*http.Response)
-	if !ok {
-		return ctx, errors.New("there is no response available")
-	}
-	if res.StatusCode >= 400 {
-		err := errors.New("create deck failed")
-		return ctx, err
-	}
-	defer func() {
-		err := res.Body.Close()
-		if err != nil {
-			log.Error(err)
-		}
-	}()
-	var actualResp CreateDeckResponse
-	err := json.NewDecoder(res.Body).Decode(&actualResp)
+	actualResp, err := decodeCreatedDeckResponse(ctx)
 	if err != nil {
-		return ctx, errors.New("failed to decode response")
+		return ctx, err
 	}
 	expectedShuffled, err := strconv.ParseBool(results.Rows[1].Cells[0].Value)
 	if err != nil {
@@ -127,4 +80,27 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(
 	}
 	assert.Equal(&t, expectedRemaining, actualResp.Remaining)
 	return ctx, t.err
+}
+
+func decodeCreatedDeckResponse(ctx context.Context) (CreateDeckResponse, error) {
+	var actualResp CreateDeckResponse
+	res, ok := ctx.Value(CreateDeckResponse{}).(*http.Response)
+	if !ok {
+		return actualResp, errors.New("there is no response available")
+	}
+	if res.StatusCode >= 400 {
+		err := errors.New("create deck failed")
+		return actualResp, err
+	}
+	defer func() {
+		err := res.Body.Close()
+		if err != nil {
+			log.Error(err)
+		}
+	}()
+	err := json.NewDecoder(res.Body).Decode(&actualResp)
+	if err != nil {
+		return actualResp, errors.New("failed to decode response")
+	}
+	return actualResp, err
 }
