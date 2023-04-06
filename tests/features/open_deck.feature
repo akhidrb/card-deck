@@ -8,7 +8,7 @@ Feature: Open a Deck
       | KH |
       | 2C |
     When the user requests to open the created deck
-    Then the user should receive a deck ID and the following results:
+    Then the user should open a deck with following results:
       | shuffled | remaining |
       | false    | 5         |
     And the cards in the deck should be:

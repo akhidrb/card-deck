@@ -6,7 +6,6 @@ import (
 	"errors"
 	"github.com/cucumber/godog"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strconv"
@@ -92,12 +91,6 @@ func decodeCreatedDeckResponse(ctx context.Context) (CreateDeckResponse, error) 
 		err := errors.New("create deck failed")
 		return actualResp, err
 	}
-	defer func() {
-		err := res.Body.Close()
-		if err != nil {
-			log.Error(err)
-		}
-	}()
 	err := json.NewDecoder(res.Body).Decode(&actualResp)
 	if err != nil {
 		return actualResp, errors.New("failed to decode response")

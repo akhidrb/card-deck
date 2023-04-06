@@ -50,6 +50,10 @@ func InitScenarios(ctx *godog.ScenarioContext) {
 		theUserShouldReceiveADeckIDAndTheFollowingResults,
 	)
 	ctx.Step(`^the user requests to open the created deck$`, theUserRequestsToOpenTheCreatedDeck)
+	ctx.Step(
+		`^the user should open a deck with following results:$`,
+		theUserShouldOpenADeckWithFollowingResults,
+	)
 	ctx.Step(`^the cards in the deck should be:$`, theCardsInTheDeckShouldBe)
 
 }
