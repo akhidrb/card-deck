@@ -1,8 +1,8 @@
 package tests
 
 type CreateDeckRequest struct {
-	Shuffled bool     `json:"shuffled"`
-	Cards    []string `json:"cards"`
+	Shuffle bool     `json:"shuffle"`
+	Cards   []string `json:"cards"`
 }
 
 type CreateDeckResponse struct {

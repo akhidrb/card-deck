@@ -37,11 +37,23 @@ func TestFeatures(t *testing.T) {
 }
 
 func aUserCreatesAFullDeckThatIsNotShuffled(ctx context.Context) (context.Context, error) {
-	url := "deck"
 	request := CreateDeckRequest{
-		Shuffled: false,
-		Cards:    nil,
+		Shuffle: false,
+		Cards:   nil,
 	}
+	return createDeck(ctx, request)
+}
+
+func aUserCreatesAFullDeckThatIsShuffled(ctx context.Context) (context.Context, error) {
+	request := CreateDeckRequest{
+		Shuffle: true,
+		Cards:   nil,
+	}
+	return createDeck(ctx, request)
+}
+
+func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context, error) {
+	url := "deck"
 	requestBody, err := json.Marshal(request)
 	if err != nil {
 		return ctx, err
@@ -78,16 +90,20 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(ctx context.Context, resu
 		return ctx, err
 	}
 	assert.Equal(&t, expectedShuffled, actualResp.Shuffled)
-	expectedRemaining, err := strconv.ParseInt(results.Rows[1].Cells[1].Value, 10, 0)
+	if t.err != nil {
+		return ctx, t.err
+	}
+	expectedRemaining, err := strconv.Atoi(results.Rows[1].Cells[1].Value)
 	if err != nil {
 		return ctx, err
 	}
 	assert.Equal(&t, expectedRemaining, actualResp.Remaining)
-	return ctx, nil
+	return ctx, t.err
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled)
+	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
 	ctx.Step(`^the user should receive a deck ID and the following results:$`, theUserShouldReceiveADeckIDAndTheFollowingResults)
 }
 
