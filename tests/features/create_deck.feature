@@ -1,9 +1,7 @@
-Feature: eat godogs
-  In order to be happy
-  As a hungry gopher
-  I need to be able to eat godogs
+Feature: Create a new Deck
 
-  Scenario: Eat 5 out of 12
-    Given there are 12 godogs
-    When I eat 5
-    Then there should be 7 remaining
+  Scenario: Create 52 deck with default options
+    When a user creates a full deck that is not shuffled
+    Then the user should receive a deck ID and the following results:
+      | shuffled | remaining |
+      | false    | 52        |
