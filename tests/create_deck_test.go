@@ -71,7 +71,7 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(ctx context.Context, resu
 	var actualResp CreateDeckResponse
 	err := json.NewDecoder(res.Body).Decode(&actualResp)
 	if err != nil {
-		return ctx, err
+		return ctx, errors.New("failed to decode response")
 	}
 	expectedShuffled, err := strconv.ParseBool(results.Rows[1].Cells[0].Value)
 	if err != nil {
@@ -92,6 +92,6 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 }
 
 func InitTestSuite(ctx *godog.TestSuiteContext) {
-	clientInst := NewClient("localhost:8080", time.Second*10)
+	clientInst := NewClient("http://localhost:8080/api/v1", time.Second*10)
 	testConfig = TestConfig{adapter: clientInst}
 }
