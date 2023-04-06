@@ -40,16 +40,22 @@ func (dto *OpenDeckResponse) ModelToDTO(deck models.Deck) {
 	}
 	dto.Cards = make([]Card, 0, len(deck.Cards))
 	for _, card := range deck.Cards {
-		cardKeys := strings.Split(card, "")
-		rankKey := cardKeys[0]
-		suitKey := cardKeys[1]
-		dto.Cards = append(
-			dto.Cards, Card{
-				Value: cardRanksMap[rankKey],
-				Suit:  cardSuitsMap[suitKey],
-				Code:  card,
-			},
-		)
+		dto.Cards = append(dto.Cards, constructCardDTOFromCode(card))
+	}
+}
+
+type DrawCardsResponse struct {
+	Cards []Card `json:"cards"`
+}
+
+func (dto *DrawCardsResponse) ModelToDTO(deck models.Deck, count int) {
+	*dto = DrawCardsResponse{}
+	dto.Cards = make([]Card, 0, len(deck.Cards))
+	for i, card := range deck.Cards {
+		if i >= count {
+			break
+		}
+		dto.Cards = append(dto.Cards, constructCardDTOFromCode(card))
 	}
 }
 
@@ -74,4 +80,15 @@ var cardSuitsMap = map[string]string{
 	"D": "DIAMONDS",
 	"C": "CLUBS",
 	"H": "HEARTS",
+}
+
+func constructCardDTOFromCode(card string) Card {
+	cardKeys := strings.Split(card, "")
+	rankKey := cardKeys[0]
+	suitKey := cardKeys[1]
+	return Card{
+		Value: cardRanksMap[rankKey],
+		Suit:  cardSuitsMap[suitKey],
+		Code:  card,
+	}
 }

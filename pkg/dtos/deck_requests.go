@@ -20,3 +20,20 @@ func (dto *CreateDeckRequest) ToModel() models.Deck {
 type OpenDeckRequest struct {
 	ID string `uri:"id" binding:"required,uuid"`
 }
+
+type DrawCardsRequest struct {
+	DrawCardsRequestURI
+	DrawCardsRequestParams
+}
+
+type DrawCardsRequestURI struct {
+	ID string `uri:"id" binding:"required,uuid"`
+}
+
+type DrawCardsRequestParams struct {
+	Count int `form:"count"`
+}
+
+func (dto *DrawCardsRequest) UpdateModel(deck *models.Deck) {
+	deck.Cards = deck.Cards[dto.Count:]
+}

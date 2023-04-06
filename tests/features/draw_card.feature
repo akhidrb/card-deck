@@ -11,7 +11,7 @@ Feature: Draw Cards from Deck
       | JC |
     When the user draws 3 card(s) from the deck
     Then the user should get the following cards:
-      | code | value | suit   |
-      | 2C   | 2     | CLUBS  |
-      | 7S   | 7     | SPADES |
-      | JC   | JACK  | CLUBS  |
+      | code | value | suit     |
+      | AC   | ACE   | CLUBS    |
+      | 5S   | 5     | SPADES   |
+      | JD   | JACK  | DIAMONDS |

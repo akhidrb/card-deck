@@ -24,3 +24,7 @@ func (p Deck) GetByID(id uuid.UUID) (models.Deck, error) {
 	err := p.db.First(&deck, id).Error
 	return deck, err
 }
+
+func (p Deck) Update(model models.Deck) error {
+	return p.db.Model(&model).Updates(model).Error
+}

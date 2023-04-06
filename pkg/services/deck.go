@@ -48,6 +48,21 @@ func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, 
 	return
 }
 
+func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsResponse, err error) {
+	id, _ := uuid.Parse(request.ID)
+	deck, err := c.repo.GetByID(id)
+	if err != nil {
+		return res, err
+	}
+	request.UpdateModel(&deck)
+	err = c.repo.Update(deck)
+	if err != nil {
+		return res, err
+	}
+	res.ModelToDTO(deck, request.Count)
+	return
+}
+
 var cardRanksList = []string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
 var cardSuitsList = []string{"S", "D", "C", "H"}
 

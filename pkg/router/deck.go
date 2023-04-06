@@ -24,4 +24,5 @@ func deckInitRoutes(apiGroup *gin.RouterGroup, ctrl controllersI.IDeck) {
 	deckGroup := apiGroup.Group("/deck")
 	deckGroup.POST("", ctrl.Create)
 	deckGroup.GET("/:id", ctrl.GetByID)
+	deckGroup.PUT("/:id/draw", ctrl.DrawCards)
 }

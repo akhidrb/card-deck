@@ -51,3 +51,30 @@ func (ctrl Deck) GetByID(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, response)
 }
+
+func (ctrl Deck) DrawCards(c *gin.Context) {
+	uri := dtos.DrawCardsRequestURI{}
+	if err := c.ShouldBindUri(&uri); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	params := dtos.DrawCardsRequestParams{}
+	if err := c.ShouldBindQuery(&params); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	request := dtos.DrawCardsRequest{
+		DrawCardsRequestURI:    uri,
+		DrawCardsRequestParams: params,
+	}
+	response, err := ctrl.service.DrawCards(request)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError, gin.H{
+				"message": "server error",
+			},
+		)
+		return
+	}
+	c.JSON(http.StatusOK, response)
+}
