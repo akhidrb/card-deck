@@ -27,8 +27,27 @@ func (ctrl Deck) Create(c *gin.Context) {
 		c.JSON(
 			http.StatusInternalServerError, gin.H{
 				"message": "server error",
-			})
+			},
+		)
 		return
 	}
 	c.JSON(http.StatusCreated, response)
+}
+
+func (ctrl Deck) GetByID(c *gin.Context) {
+	request := dtos.OpenDeckRequest{}
+	if err := c.ShouldBindUri(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		return
+	}
+	response, err := ctrl.service.GetByID(request)
+	if err != nil {
+		c.JSON(
+			http.StatusInternalServerError, gin.H{
+				"message": "server error",
+			},
+		)
+		return
+	}
+	c.JSON(http.StatusOK, response)
 }

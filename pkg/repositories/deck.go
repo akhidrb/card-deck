@@ -3,6 +3,7 @@ package repositories
 import (
 	repositoriesI "github.com/akhidrb/toggl-cards/pkg/interfaces/repositories"
 	"github.com/akhidrb/toggl-cards/pkg/models"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -16,4 +17,10 @@ func NewDeck(dbConn *gorm.DB) repositoriesI.IDeck {
 
 func (p Deck) Create(deck *models.Deck) error {
 	return p.db.Create(deck).Error
+}
+
+func (p Deck) GetByID(id uuid.UUID) (models.Deck, error) {
+	deck := models.Deck{}
+	err := p.db.First(&deck, id).Error
+	return deck, err
 }

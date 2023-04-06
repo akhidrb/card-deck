@@ -5,6 +5,7 @@ import (
 	"github.com/akhidrb/toggl-cards/pkg/dtos"
 	repositoriesI "github.com/akhidrb/toggl-cards/pkg/interfaces/repositories"
 	servicesI "github.com/akhidrb/toggl-cards/pkg/interfaces/services"
+	"github.com/google/uuid"
 	"math/rand"
 	"strings"
 	"time"
@@ -34,7 +35,17 @@ func (c Deck) Create(request dtos.CreateDeckRequest) (res dtos.CreateDeckRespons
 		return dtos.CreateDeckResponse{}, err
 	}
 	res.ModelToDTO(deck)
-	return res, err
+	return
+}
+
+func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, err error) {
+	id, _ := uuid.Parse(request.ID)
+	deck, err := c.repo.GetByID(id)
+	if err != nil {
+		return res, err
+	}
+	res.ModelToDTO(deck)
+	return
 }
 
 func (c Deck) constructCardList() []string {

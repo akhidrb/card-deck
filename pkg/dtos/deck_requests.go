@@ -16,3 +16,7 @@ func (dto *CreateDeckRequest) ToModel() models.Deck {
 		Cards:    dto.CardsList,
 	}
 }
+
+type OpenDeckRequest struct {
+	ID string `uri:"id" binding:"required,uuid"`
+}

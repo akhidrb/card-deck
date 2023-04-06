@@ -6,4 +6,5 @@ import (
 
 type IDeck interface {
 	Create(request dtos.CreateDeckRequest) (dtos.CreateDeckResponse, error)
+	GetByID(request dtos.OpenDeckRequest) (dtos.OpenDeckResponse, error)
 }

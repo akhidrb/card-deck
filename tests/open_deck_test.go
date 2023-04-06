@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+const openDeck = "OPEN_DECK"
+
 func theUserRequestsToOpenTheCreatedDeck(ctx context.Context) (context.Context, error) {
 	createdDeck, err := decodeCreatedDeckResponse(ctx)
 	if err != nil {
@@ -23,14 +25,14 @@ func theUserRequestsToOpenTheCreatedDeck(ctx context.Context) (context.Context, 
 	if err != nil {
 		return ctx, err
 	}
-	return context.WithValue(ctx, OpenDeckResponse{}, res), err
+	return context.WithValue(ctx, openDeck, res), err
 }
 
 func theUserShouldReceiveADeckWithTheFollowingResults(
 	ctx context.Context,
 	results *godog.Table,
 ) (context.Context, error) {
-	res, ok := ctx.Value(OpenDeckResponse{}).(*http.Response)
+	res, ok := ctx.Value(openDeck).(*http.Response)
 	if !ok {
 		return ctx, errors.New("there is no response available")
 	}
