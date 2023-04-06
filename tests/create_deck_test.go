@@ -59,6 +59,21 @@ func aUserCreatesAFullDeckThatIsShuffled(ctx context.Context) (context.Context, 
 	return createDeck(ctx, request)
 }
 
+func aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards(
+	ctx context.Context,
+	cardsTable *godog.Table,
+) (context.Context, error) {
+	cards := make([]string, 0, len(cardsTable.Rows))
+	for _, row := range cardsTable.Rows {
+		cards = append(cards, row.Cells[0].Value)
+	}
+	request := CreateDeckRequest{
+		Shuffle: false,
+		Cards:   cards,
+	}
+	return createDeck(ctx, request)
+}
+
 func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context, error) {
 	url := "deck"
 	params := map[string]string{
@@ -74,7 +89,9 @@ func createDeck(ctx context.Context, request CreateDeckRequest) (context.Context
 	return context.WithValue(ctx, CreateDeckResponse{}, res), err
 }
 
-func theUserShouldReceiveADeckIDAndTheFollowingResults(ctx context.Context, results *godog.Table) (context.Context, error) {
+func theUserShouldReceiveADeckIDAndTheFollowingResults(
+	ctx context.Context, results *godog.Table,
+) (context.Context, error) {
 	res, ok := ctx.Value(CreateDeckResponse{}).(*http.Response)
 	if !ok {
 		return ctx, errors.New("there is no response available")
@@ -111,9 +128,18 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(ctx context.Context, resu
 }
 
 func InitializeScenario(ctx *godog.ScenarioContext) {
-	ctx.Step(`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled)
+	ctx.Step(
+		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
+	)
 	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
-	ctx.Step(`^the user should receive a deck ID and the following results:$`, theUserShouldReceiveADeckIDAndTheFollowingResults)
+	ctx.Step(
+		`^a user creates a partial deck that is not shuffled with the following cards:$`,
+		aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards,
+	)
+	ctx.Step(
+		`^the user should receive a deck ID and the following results:$`,
+		theUserShouldReceiveADeckIDAndTheFollowingResults,
+	)
 }
 
 func InitTestSuite(ctx *godog.TestSuiteContext) {

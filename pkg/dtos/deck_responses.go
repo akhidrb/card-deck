@@ -1,6 +1,8 @@
 package dtos
 
-import "github.com/akhidrb/toggl-cards/pkg/models"
+import (
+	"github.com/akhidrb/toggl-cards/pkg/models"
+)
 
 type CreateDeckResponse struct {
 	DeckID    string `json:"deck_id"`

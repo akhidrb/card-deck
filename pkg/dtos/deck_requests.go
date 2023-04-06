@@ -5,13 +5,14 @@ import (
 )
 
 type CreateDeckRequest struct {
-	Shuffle bool     `form:"shuffle"`
-	Cards   []string `json:"cards"`
+	Shuffle   bool    `form:"shuffle"`
+	Cards     *string `form:"cards"`
+	CardsList []string
 }
 
 func (dto *CreateDeckRequest) ToModel() models.Deck {
 	return models.Deck{
 		Shuffled: dto.Shuffle,
-		Cards:    dto.Cards,
+		Cards:    dto.CardsList,
 	}
 }

@@ -6,6 +6,7 @@ import (
 	repositoriesI "github.com/akhidrb/toggl-cards/pkg/interfaces/repositories"
 	servicesI "github.com/akhidrb/toggl-cards/pkg/interfaces/services"
 	"math/rand"
+	"strings"
 	"time"
 )
 
@@ -18,11 +19,14 @@ func NewDeck(repo repositoriesI.IDeck) servicesI.IDeck {
 }
 
 func (c Deck) Create(request dtos.CreateDeckRequest) (res dtos.CreateDeckResponse, err error) {
-	if len(request.Cards) == 0 {
-		request.Cards = c.constructCardList()
+	if request.Cards != nil {
+		request.CardsList = strings.Split(*request.Cards, ",")
+	}
+	if len(request.CardsList) == 0 {
+		request.CardsList = c.constructCardList()
 	}
 	if request.Shuffle {
-		c.shuffleCards(request.Cards)
+		c.shuffleCards(request.CardsList)
 	}
 	deck := request.ToModel()
 	err = c.repo.Create(&deck)
