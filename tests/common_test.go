@@ -55,6 +55,8 @@ func InitScenarios(ctx *godog.ScenarioContext) {
 		theUserShouldOpenADeckWithFollowingResults,
 	)
 	ctx.Step(`^the cards in the deck should be:$`, theCardsInTheDeckShouldBe)
+	ctx.Step(`^the user draws (\d+) card\(s\) from the deck$`, theUserDrawsCardsFromTheDeck)
+	ctx.Step(`^the user should get the following cards:$`, theUserShouldGetTheFollowingCards)
 
 }
 
