@@ -4,33 +4,20 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/golang-migrate/migrate/v4"
-	postgresMigrate "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/cucumber/godog"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"net/http"
 	"strconv"
 	"strings"
 	"testing"
-	"time"
-
-	"github.com/cucumber/godog"
 )
 
-var testConfig TestConfig
-
-type TestConfig struct {
-	adapter Client
-}
-
-func TestFeatures(t *testing.T) {
+func TestCreateDeckFeatures(t *testing.T) {
 	suite := godog.TestSuite{
-		TestSuiteInitializer: InitTestSuite,
-		ScenarioInitializer:  InitializeScenario,
+		TestSuiteInitializer: initTestSuite,
+		ScenarioInitializer:  initCreateDeckScenarios,
 		Options: &godog.Options{
 			Format:   "pretty",
 			Paths:    []string{"features"},
@@ -41,6 +28,21 @@ func TestFeatures(t *testing.T) {
 	if suite.Run() != 0 {
 		t.Fatal("non-zero status returned, failed to run feature tests")
 	}
+}
+
+func initCreateDeckScenarios(ctx *godog.ScenarioContext) {
+	ctx.Step(
+		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
+	)
+	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
+	ctx.Step(
+		`^a user creates a partial deck that is not shuffled with the following cards:$`,
+		aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards,
+	)
+	ctx.Step(
+		`^the user should receive a deck ID and the following results:$`,
+		theUserShouldReceiveADeckIDAndTheFollowingResults,
+	)
 }
 
 func aUserCreatesAFullDeckThatIsNotShuffled(ctx context.Context) (context.Context, error) {
@@ -125,50 +127,4 @@ func theUserShouldReceiveADeckIDAndTheFollowingResults(
 	}
 	assert.Equal(&t, expectedRemaining, actualResp.Remaining)
 	return ctx, t.err
-}
-
-func InitializeScenario(ctx *godog.ScenarioContext) {
-	ctx.Step(
-		`^a user creates a full deck that is not shuffled$`, aUserCreatesAFullDeckThatIsNotShuffled,
-	)
-	ctx.Step(`^a user creates a full deck that is shuffled$`, aUserCreatesAFullDeckThatIsShuffled)
-	ctx.Step(
-		`^a user creates a partial deck that is not shuffled with the following cards:$`,
-		aUserCreatesAPartialDeckThatIsNotShuffledWithTheFollowingCards,
-	)
-	ctx.Step(
-		`^the user should receive a deck ID and the following results:$`,
-		theUserShouldReceiveADeckIDAndTheFollowingResults,
-	)
-}
-
-func InitTestSuite(ctx *godog.TestSuiteContext) {
-	clientInst := NewClient("http://localhost:8080/api/v1", time.Second*10)
-	testConfig = TestConfig{adapter: clientInst}
-	dsn := fmt.Sprintf("host=localhost user=toggl password=toggl dbname=cards port=5432 sslmode=disable")
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	runMigrations(db)
-}
-func runMigrations(db *gorm.DB) {
-	sqlDB, err := db.DB()
-	if err != nil {
-		log.Fatal(err)
-	}
-	driver, err := postgresMigrate.WithInstance(sqlDB, &postgresMigrate.Config{})
-	if err != nil {
-		log.Fatal(err)
-	}
-	m, err := migrate.NewWithDatabaseInstance("file://../migrations", "postgres", driver)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := m.Down(); err != nil {
-		log.Println("Database wasn't dropped", "err", err.Error())
-	}
-	if err := m.Up(); err != nil {
-		log.Println("Migrations weren't updated", "err", err.Error())
-	}
 }
