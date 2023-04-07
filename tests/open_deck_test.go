@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/cucumber/godog"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"net/http"
 	"strconv"
@@ -83,6 +84,27 @@ func theCardsInTheDeckShouldBe(ctx context.Context, cards *godog.Table) (
 		if t.err != nil {
 			return ctx, t.err
 		}
+	}
+	return ctx, nil
+}
+
+func theUserTriesToRequestToOpenADeckThatDoesntExit(ctx context.Context) (context.Context, error) {
+	url := fmt.Sprintf("deck/%s", uuid.New().String())
+	res, err := testConfig.adapter.Do(http.MethodGet, url, nil, nil, nil)
+	if err != nil {
+		return ctx, err
+	}
+	return context.WithValue(ctx, responseKey, res), err
+}
+
+func theUserShouldReceiveANotFoundError(ctx context.Context) (context.Context, error) {
+	res, ok := ctx.Value(responseKey).(*http.Response)
+	if !ok {
+		return ctx, errors.New("there is no response available")
+	}
+	if res.StatusCode != 404 {
+		err := errors.New("no not found error was made")
+		return ctx, err
 	}
 	return ctx, nil
 }

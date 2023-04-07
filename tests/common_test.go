@@ -58,6 +58,11 @@ func InitScenarios(ctx *godog.ScenarioContext) {
 	ctx.Step(`^the user draws (\d+) card\(s\) from the deck$`, theUserDrawsCardsFromTheDeck)
 	ctx.Step(`^the user should get the following cards:$`, theUserShouldGetTheFollowingCards)
 	ctx.Step(`^the user should receive a validation error$`, theUserShouldReceiveAValidationError)
+	ctx.Step(`^the user should receive a not found error$`, theUserShouldReceiveANotFoundError)
+	ctx.Step(
+		`^the user tries to request to open a deck that doesn\'t exit$`,
+		theUserTriesToRequestToOpenADeckThatDoesntExit,
+	)
 }
 
 func InitTestSuite(ctx *godog.TestSuiteContext) {

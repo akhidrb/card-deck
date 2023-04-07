@@ -18,3 +18,7 @@ Feature: Open a Deck
       | JD   | JACK  | DIAMONDS |
       | KH   | KING  | HEARTS   |
       | 2C   | 2     | CLUBS    |
+
+  Scenario: (2.2) Open a deck that doesn't exist (Edge Case)
+    When the user tries to request to open a deck that doesn't exit
+    Then the user should receive a not found error
