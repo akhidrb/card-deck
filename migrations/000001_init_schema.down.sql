@@ -1,0 +1,7 @@
+BEGIN;
+
+DROP TABLE IF EXISTS decks;
+
+DROP EXTENSION IF EXISTS "uuid-ossp";
+
+COMMIT;

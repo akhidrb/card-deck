@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "22d7fe09-b0f8-4a74-8803-5b0e8a338714",
+		"name": "Toggl",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Deck",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/v1/deck?shuffle=true",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"deck"
+					],
+					"query": [
+						{
+							"key": "shuffle",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deck By ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/v1/deck/:id",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"deck",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "a7d0e6f7-6c1b-44e6-a325-d6c1272ab6b9"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Draw Cards From Deck",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{baseURL}}/api/v1/deck/:id/draw?count=49",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"deck",
+						":id",
+						"draw"
+					],
+					"query": [
+						{
+							"key": "count",
+							"value": "49"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "a7d0e6f7-6c1b-44e6-a325-d6c1272ab6b9"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:8080"
+		}
+	]
+}
