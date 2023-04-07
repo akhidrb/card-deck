@@ -13,8 +13,9 @@ services:
     environment:
       PORT: ":8080"
       DB_HOST: postgres
-      DB_USER: khidr
-      DB_PASSWORD: khidr
+      DB_USER: toggl
+      DB_PASSWORD: toggl
+      DB_NAME: cards
     depends_on:
       - postgres
     restart:
