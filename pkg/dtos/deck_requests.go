@@ -59,3 +59,16 @@ type DrawCardsRequestURI struct {
 type DrawCardsRequestParams struct {
 	Count int `form:"count"`
 }
+
+func (dto *DrawCardsRequest) ValidateCards(deck models.Deck) error {
+	if dto.Count > len(deck.Cards) {
+		return config.NewValidationError(
+			errors.New(
+				fmt.Sprintf(
+					"maximum number of count is %d", len(deck.Cards),
+				),
+			),
+		)
+	}
+	return nil
+}

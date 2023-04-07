@@ -52,9 +52,8 @@ func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, 
 	if deck == nil {
 		err = config.NewNotFoundResourceError(errors.New("card deck does not exist"))
 		return
-	} else {
-		res.ModelToDTO(*deck)
 	}
+	res.ModelToDTO(*deck)
 	return
 }
 
@@ -64,12 +63,17 @@ func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsRespon
 	if err != nil {
 		return
 	}
-	res.ModelToDTO(deck, request.Count)
-	if deck != nil {
-		err = c.repo.Update(*deck)
-		if err != nil {
-			return
-		}
+	if deck == nil {
+		err = config.NewNotFoundResourceError(errors.New("card deck does not exist"))
+		return
+	}
+	if err = request.ValidateCards(*deck); err != nil {
+		return
+	}
+	res.ModelToDTOAndUpdatedModel(deck, request.Count)
+	err = c.repo.Update(*deck)
+	if err != nil {
+		return
 	}
 	return
 }
