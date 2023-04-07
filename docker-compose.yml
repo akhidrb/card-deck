@@ -5,20 +5,20 @@ volumes:
     driver: local
 
 services:
-#  toggl-cards:
-#    container_name: toggl-cards
-#    image: toggl-cards
-#    ports:
-#      - "8080:8080"
-#    environment:
-#      PORT: ":8080"
-#      DB_HOST: postgres
-#      DB_USER: khidr
-#      DB_PASSWORD: khidr
-#    depends_on:
-#      - postgres
-#    restart:
-#      always
+  toggl-cards:
+    build: .
+    container_name: toggl-cards
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: ":8080"
+      DB_HOST: postgres
+      DB_USER: khidr
+      DB_PASSWORD: khidr
+    depends_on:
+      - postgres
+    restart:
+      always
 
   postgres:
     container_name: toggl-postgres

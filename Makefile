@@ -1,13 +1,11 @@
-linter:
-	golangci-lint run
-
-
 # Migration Commands
 migrate-create:
 	migrate create -ext sql -dir migrations -seq $(name)
 
+# Docker Commands
+build:
+	docker build -t toggl-cards .
 
-# Docker Compose Commands
 start:
 	docker-compose up -d
 

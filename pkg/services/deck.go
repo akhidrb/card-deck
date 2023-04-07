@@ -29,10 +29,10 @@ func (c Deck) Create(request dtos.CreateDeckRequest) (res dtos.CreateDeckRespons
 		}
 	}
 	if len(request.CardsList) == 0 {
-		request.CardsList = c.constructCardList()
+		request.CardsList = ConstructCardList()
 	}
 	if request.Shuffle {
-		c.shuffleCards(request.CardsList)
+		ShuffleCards(request.CardsList)
 	}
 	deck := request.ToModel()
 	err = c.repo.Create(&deck)
@@ -81,7 +81,7 @@ func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsRespon
 var cardRanksList = []string{"A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"}
 var cardSuitsList = []string{"S", "D", "C", "H"}
 
-func (c Deck) constructCardList() []string {
+func ConstructCardList() []string {
 	cardList := make([]string, 0, 52)
 	for _, suit := range cardSuitsList {
 		for _, rank := range cardRanksList {
@@ -92,7 +92,7 @@ func (c Deck) constructCardList() []string {
 	return cardList
 }
 
-func (c Deck) shuffleCards(cards []string) {
+func ShuffleCards(cards []string) {
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	r.Shuffle(len(cards), func(i, j int) { cards[i], cards[j] = cards[j], cards[i] })
 }
