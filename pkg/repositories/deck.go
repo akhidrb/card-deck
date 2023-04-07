@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"errors"
 	repositoriesI "github.com/akhidrb/toggl-cards/pkg/interfaces/repositories"
 	"github.com/akhidrb/toggl-cards/pkg/models"
 	"github.com/google/uuid"
@@ -19,10 +20,13 @@ func (p Deck) Create(deck *models.Deck) error {
 	return p.db.Create(deck).Error
 }
 
-func (p Deck) GetByID(id uuid.UUID) (models.Deck, error) {
+func (p Deck) GetByID(id uuid.UUID) (*models.Deck, error) {
 	deck := models.Deck{}
 	err := p.db.First(&deck, id).Error
-	return deck, err
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, nil
+	}
+	return &deck, err
 }
 
 func (p Deck) Update(model models.Deck) error {

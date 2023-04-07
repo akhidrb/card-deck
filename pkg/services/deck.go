@@ -1,7 +1,9 @@
 package services
 
 import (
+	"errors"
 	"fmt"
+	"github.com/akhidrb/toggl-cards/pkg/config"
 	"github.com/akhidrb/toggl-cards/pkg/dtos"
 	repositoriesI "github.com/akhidrb/toggl-cards/pkg/interfaces/repositories"
 	servicesI "github.com/akhidrb/toggl-cards/pkg/interfaces/services"
@@ -44,7 +46,11 @@ func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, 
 	if err != nil {
 		return res, err
 	}
-	res.ModelToDTO(deck)
+	if deck == nil {
+		return res, config.NewNotFoundResourceError(errors.New("card deck does not exist"))
+	} else {
+		res.ModelToDTO(*deck)
+	}
 	return
 }
 
@@ -54,10 +60,12 @@ func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsRespon
 	if err != nil {
 		return res, err
 	}
-	res.ModelToDTO(&deck, request.Count)
-	err = c.repo.Update(deck)
-	if err != nil {
-		return res, err
+	res.ModelToDTO(deck, request.Count)
+	if deck != nil {
+		err = c.repo.Update(*deck)
+		if err != nil {
+			return res, err
+		}
 	}
 	return
 }

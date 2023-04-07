@@ -7,6 +7,6 @@ import (
 
 type IDeck interface {
 	Create(model *models.Deck) error
-	GetByID(id uuid.UUID) (models.Deck, error)
+	GetByID(id uuid.UUID) (*models.Deck, error)
 	Update(model models.Deck) error
 }
