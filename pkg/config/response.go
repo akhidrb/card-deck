@@ -11,6 +11,8 @@ func HandleResponseError(c *gin.Context, err error) {
 		c.JSON(http.StatusBadRequest, errorToDtoError(cErr))
 	case NotFoundResourceError:
 		c.JSON(http.StatusNotFound, errorToDtoError(cErr))
+	case ValidationError:
+		c.JSON(http.StatusForbidden, errorToDtoError(cErr))
 	default:
 		c.JSON(
 			http.StatusInternalServerError, ErrorResponse{
@@ -46,6 +48,16 @@ type BadRequestError struct {
 
 func NewBadRequestError(err error) BadRequestError {
 	return BadRequestError{
+		error: err,
+	}
+}
+
+type ValidationError struct {
+	error
+}
+
+func NewValidationError(err error) ValidationError {
+	return ValidationError{
 		error: err,
 	}
 }

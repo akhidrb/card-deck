@@ -22,3 +22,12 @@ Feature: Create a new Deck
     Then the user should receive a deck ID and the following results:
       | shuffled | remaining |
       | false    | 5         |
+
+  Scenario: (1.4) Create partial deck that is not shuffled with invalid cards (Edge Case)
+    When a user creates a partial deck that is not shuffled with the following cards:
+      | AB |
+      | 5T |
+      | JD |
+      | KH |
+      | 2C |
+    Then the user should receive a validation error

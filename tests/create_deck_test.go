@@ -97,3 +97,15 @@ func decodeCreatedDeckResponse(ctx context.Context) (CreateDeckResponse, error) 
 	}
 	return actualResp, err
 }
+
+func theUserShouldReceiveAValidationError(ctx context.Context) (context.Context, error) {
+	res, ok := ctx.Value(responseKey).(*http.Response)
+	if !ok {
+		return ctx, errors.New("there is no response available")
+	}
+	if res.StatusCode != 403 {
+		err := errors.New("no validation error was made")
+		return ctx, err
+	}
+	return ctx, nil
+}

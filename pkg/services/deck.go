@@ -24,6 +24,9 @@ func NewDeck(repo repositoriesI.IDeck) servicesI.IDeck {
 func (c Deck) Create(request dtos.CreateDeckRequest) (res dtos.CreateDeckResponse, err error) {
 	if request.Cards != nil {
 		request.CardsList = strings.Split(*request.Cards, ",")
+		if err = request.ValidateCards(); err != nil {
+			return
+		}
 	}
 	if len(request.CardsList) == 0 {
 		request.CardsList = c.constructCardList()
@@ -34,7 +37,7 @@ func (c Deck) Create(request dtos.CreateDeckRequest) (res dtos.CreateDeckRespons
 	deck := request.ToModel()
 	err = c.repo.Create(&deck)
 	if err != nil {
-		return dtos.CreateDeckResponse{}, err
+		return
 	}
 	res.ModelToDTO(deck)
 	return
@@ -44,10 +47,11 @@ func (c Deck) GetByID(request dtos.OpenDeckRequest) (res dtos.OpenDeckResponse, 
 	id, _ := uuid.Parse(request.ID)
 	deck, err := c.repo.GetByID(id)
 	if err != nil {
-		return res, err
+		return
 	}
 	if deck == nil {
-		return res, config.NewNotFoundResourceError(errors.New("card deck does not exist"))
+		err = config.NewNotFoundResourceError(errors.New("card deck does not exist"))
+		return
 	} else {
 		res.ModelToDTO(*deck)
 	}
@@ -58,13 +62,13 @@ func (c Deck) DrawCards(request dtos.DrawCardsRequest) (res dtos.DrawCardsRespon
 	id, _ := uuid.Parse(request.ID)
 	deck, err := c.repo.GetByID(id)
 	if err != nil {
-		return res, err
+		return
 	}
 	res.ModelToDTO(deck, request.Count)
 	if deck != nil {
 		err = c.repo.Update(*deck)
 		if err != nil {
-			return res, err
+			return
 		}
 	}
 	return
