@@ -1,4 +1,8 @@
-# Toggl Cards
+# Card Deck
+
+#### Description
+
+  APIs for manipulating deck of cards to use in card games
 
 ![alt text](Cards.png)
 
